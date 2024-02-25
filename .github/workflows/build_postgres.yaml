@@ -6,6 +6,14 @@ on:
         description: 'Docker version'
         required: true
         default: 'latest'
+      type:
+        description: 'Docker type'
+        required: true
+        default: 'postgres'
+        type: choice
+        options:
+          - postgres
+          - mongo
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -23,7 +31,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./postgres
-          file: ./postgres/Dockerfile
+          context: ./${{ github.event.inputs.type }}
+          file: ./${{ github.event.inputs.type }}/Dockerfile
           push: true
           tags: clownfishx/baka-postgres:${{ github.event.inputs.version }}
