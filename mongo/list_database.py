@@ -10,7 +10,8 @@ client = MongoClient(f'mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_
 
 # List all the databases
 database_names = client.list_database_names()
-excludes = ['config', 'local']
+
+excludes = ['admin', 'config', 'local']
 # Print the list of database names
 for db_name in database_names:
     if db_name not in excludes:

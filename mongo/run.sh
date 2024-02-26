@@ -48,7 +48,7 @@ current_date=$(date +"%Y/%m/%d")
 echo "$output" | while read -r line; do
     db=$line
     echo "Starting dump of ${db} database(s) from ${PGHOST}..."
-    mongodump --host $MONGODB_HOST --port $MONGODB_PORT --username $MONGODB_USERNAME --password $MONGODB_PASSWORD --db $db --out $backup_dir/$db
+    mongodump --authenticationDatabase=admin --uri="mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/" --db $db --out $backup_dir/$db
 
     cd $backup_dir/$db
     zip -r "$backup_dir/$db.zip" *

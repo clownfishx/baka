@@ -39,7 +39,7 @@ spec:
             {{- if eq $job.database.type "postgres" }}
             image: clownfishx/baka-postgres:0.0.2
             {{- else }}
-            image: clownfishx/baka-mongo:0.0.2
+            image: clownfishx/baka-mongo:0.0.3
             {{- end }}
             imagePullPolicy: IfNotPresent
             env:
@@ -102,7 +102,7 @@ spec:
           tolerations:
 {{ toYaml . | indent 12 }}
           {{- end }}
-          restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
+          restartPolicy: {{ $job.restartPolicy | default "Never" }}
           {{- with $job.volumes }}
           volumes:
 {{ toYaml . | indent 12 }}
