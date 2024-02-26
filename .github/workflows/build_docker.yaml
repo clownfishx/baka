@@ -34,4 +34,4 @@ jobs:
           context: ./${{ github.event.inputs.type }}
           file: ./${{ github.event.inputs.type }}/Dockerfile
           push: true
-          tags: clownfishx/baka-postgres:${{ github.event.inputs.version }}
+          tags: clownfishx/baka-${{ github.event.inputs.type }}:${{ github.event.inputs.version }}

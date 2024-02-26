@@ -12,11 +12,6 @@ if [ -z "${BUCKET_PREFIX}" ]; then
   exit 1
 fi
 
-if [ -z "${PGDATABASE}" ]; then
-  echo "You need to set the PGDATABASE environment variable."
-  exit 1
-fi
-
 if [ -z "${PGUSER}" ]; then
   echo "You need to set the PGUSER environment variable."
   exit 1

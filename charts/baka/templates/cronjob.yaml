@@ -1,0 +1,112 @@
+{{- range $jobname, $job := .Values.jobs }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "cronjobs.releaseName" $ }}-{{ $jobname }}
+  labels:
+    {{- include "cronjobs.labels" $ | nindent 4 }}
+spec:
+  concurrencyPolicy: {{ $job.concurrencyPolicy | default "Allow" }}
+  failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit | default 10 }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ include "cronjobs.releaseName" $ }}
+            cron: {{ $jobname }}
+        spec:
+        {{- if and (hasKey $job "serviceAccount") (hasKey $job.serviceAccount "name") }}
+          serviceAccountName: {{ $job.serviceAccount.name }}
+        {{- else }}
+          serviceAccountName: {{ $.Release.Name}}-{{ $jobname }}
+        {{- end }}
+        {{- if hasKey $job "securityContext" }}
+          {{- if $job.securityContext.runAsUser }}
+          securityContext:
+            runAsUser: {{ $job.securityContext.runAsUser }}
+            {{- if $job.securityContext.runAsGroup }}
+            runAsGroup: {{ $job.securityContext.runAsGroup }}
+            {{- end }}
+            {{- if $job.securityContext.fsGroup }}
+            fsGroup: {{ $job.securityContext.fsGroup }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+          containers:
+          - name: {{ $jobname }}
+            {{- if eq $job.database.type "postgres" }}
+            image: clownfishx/baka-postgres:0.0.2
+            {{- else }}
+            image: clownfishx/baka-mongo:0.0.2
+            {{- end }}
+            imagePullPolicy: IfNotPresent
+            env:
+            - name: BUCKET_PREFIX
+              value: {{ $job.s3.prefix }}
+            - name: AWS_BUCKET
+              value: {{ $job.s3.bucket }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ $job.s3.key }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ $job.s3.secret }}
+            {{- if eq $job.database.type "postgres" }}
+            - name: PGUSER
+              value: {{$job.database.user}}
+            - name: PGPASSWORD
+              value: {{$job.database.password}}
+            - name: PGHOST
+              value: {{$job.database.host}}
+            - name: PGPORT
+              value: {{$job.database.port}}
+            {{- else }}
+            - name: MONGODB_USERNAME
+              value: {{$job.database.user}}
+            - name: MONGODB_PASSWORD
+              value: {{$job.database.password}}
+            - name: MONGODB_HOST
+              value: {{$job.database.host}}
+            - name: MONGODB_PORT
+              value: {{$job.database.port}}
+            {{- end }}
+            {{- with $job.envFrom }}
+            envFrom:
+{{ toYaml . | indent 12 }}
+            {{- end }}
+            {{- with $job.command }}
+            command:
+{{ toYaml . | indent 12 }}
+            {{- end }}
+            {{- with $job.args }}
+            args:
+{{ toYaml . | indent 12 }}
+              {{- end }}
+            {{- with $job.resources }}
+            resources:
+{{ toYaml . | indent 14 }}
+            {{- end }}
+            {{- with $job.volumeMounts }}
+            volumeMounts:
+{{ toYaml . | indent 12 }}
+            {{- end }}
+          {{- with $job.nodeSelector }}
+          nodeSelector:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{- with $job.affinity }}
+          affinity:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{- with $job.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          restartPolicy: {{ $job.restartPolicy | default "OnFailure" }}
+          {{- with $job.volumes }}
+          volumes:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+  schedule: {{ $job.schedule | quote }}
+  successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit | default 10 }}
+{{- end }}

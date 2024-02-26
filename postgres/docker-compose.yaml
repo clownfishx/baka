@@ -10,7 +10,6 @@ services:
     build: .
     environment:
       BUCKET_PREFIX: testing
-      PGDATABASE: testdata
       PGUSER: root
       PGPASSWORD: asdfasdf
       PGHOST: db
