@@ -43,32 +43,32 @@ spec:
             {{- end }}
             imagePullPolicy: IfNotPresent
             env:
-            - name: BUCKET_PREFIX
-              value: {{ $job.s3.prefix }}
-            - name: AWS_BUCKET
-              value: {{ $job.s3.bucket }}
-            - name: AWS_ACCESS_KEY_ID
-              value: {{ $job.s3.key }}
-            - name: AWS_SECRET_ACCESS_KEY
-              value: {{ $job.s3.secret }}
+            - name: "BUCKET_PREFIX"
+              value: {{ $job.s3.prefix| quote  }}
+            - name: "AWS_BUCKET"
+              value: {{ $job.s3.bucket | quote }}
+            - name: "AWS_ACCESS_KEY_ID"
+              value: {{ $job.s3.key | quote }}
+            - name: "AWS_SECRET_ACCESS_KEY"
+              value: {{ $job.s3.secret | quote }}
             {{- if eq $job.database.type "postgres" }}
-            - name: PGUSER
-              value: {{$job.database.user}}
-            - name: PGPASSWORD
-              value: {{$job.database.password}}
-            - name: PGHOST
-              value: {{$job.database.host}}
-            - name: PGPORT
-              value: {{$job.database.port}}
+            - name: "PGUSER"
+              value: {{ $job.database.user | quote }}
+            - name: "PGPASSWORD"
+              value: {{$job.database.password | quote }}
+            - name: "PGHOST"
+              value: {{ $job.database.host | quote }}
+            - name: "PGPORT"
+              value: {{ $job.database.port | quote }}
             {{- else }}
-            - name: MONGODB_USERNAME
-              value: {{$job.database.user}}
-            - name: MONGODB_PASSWORD
-              value: {{$job.database.password}}
-            - name: MONGODB_HOST
-              value: {{$job.database.host}}
-            - name: MONGODB_PORT
-              value: {{$job.database.port}}
+            - name: "MONGODB_USERNAME"
+              value: {{ $job.database.user| quote }}
+            - name: "MONGODB_PASSWORD"
+              value: {{ $job.database.password| quote }}
+            - name: "MONGODB_HOST"
+              value: {{ $job.database.host| quote }}
+            - name: "MONGODB_PORT"
+              value: {{ $job.database.port| quote }}
             {{- end }}
             {{- with $job.envFrom }}
             envFrom:

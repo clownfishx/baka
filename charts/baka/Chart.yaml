@@ -1,7 +1,7 @@
 apiVersion: v2
 name: baka
 description: A chart for baka
-version: 0.0.2
+version: 0.0.3
 keywords:
   - baka
   - automatic
