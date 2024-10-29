@@ -38,9 +38,16 @@ spec:
           - name: {{ $jobname }}
             {{- if eq $job.database.type "postgres" }}
             image: clownfishx/baka-postgres:0.0.2
-            {{- else }}
+            {{- end }}
+
+            {{- if eq $job.database.type "mongo" }}
             image: clownfishx/baka-mongo:0.0.3
             {{- end }}
+
+            {{- if eq $job.database.type "mysql" }}
+            image: clownfishx/baka-mysql:0.0.1
+            {{- end }}
+
             imagePullPolicy: IfNotPresent
             env:
             - name: "BUCKET_PREFIX"
@@ -60,7 +67,8 @@ spec:
               value: {{ $job.database.host | quote }}
             - name: "PGPORT"
               value: {{ $job.database.port | quote }}
-            {{- else }}
+            {{- end }}
+            {{- if eq $job.database.type "mongo" }}
             - name: "MONGODB_USERNAME"
               value: {{ $job.database.user| quote }}
             - name: "MONGODB_PASSWORD"
@@ -70,6 +78,29 @@ spec:
             - name: "MONGODB_PORT"
               value: {{ $job.database.port| quote }}
             {{- end }}
+
+            {{- if eq $job.database.type "mongo" }}
+            - name: "MONGODB_USERNAME"
+              value: {{ $job.database.user| quote }}
+            - name: "MONGODB_PASSWORD"
+              value: {{ $job.database.password| quote }}
+            - name: "MONGODB_HOST"
+              value: {{ $job.database.host| quote }}
+            - name: "MONGODB_PORT"
+              value: {{ $job.database.port| quote }}
+            {{- end }}
+
+            {{- if eq $job.database.type "mysql" }}
+            - name: "MYSQL_USER"
+              value: {{ $job.database.user| quote }}
+            - name: "MYSQL_PASSWORD"
+              value: {{ $job.database.password| quote }}
+            - name: "MYSQL_HOST"
+              value: {{ $job.database.host| quote }}
+            - name: "MYSQL_PORT"
+              value: {{ $job.database.port| quote }}
+            {{- end }}
+
             {{- with $job.envFrom }}
             envFrom:
 {{ toYaml . | indent 12 }}

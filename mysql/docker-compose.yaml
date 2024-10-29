@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: sample
+      MYSQL_ROOT_PASSWORD: test
+
+  backup:
+    build: .
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: test
+      MYSQL_HOST: db
+      BUCKET_PREFIX: testing
+      AWS_BUCKET:
+      AWS_ACCESS_KEY_ID:
+      AWS_SECRET_ACCESS_KEY:
