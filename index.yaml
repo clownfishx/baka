@@ -2,6 +2,23 @@ apiVersion: v1
 entries:
   baka:
   - apiVersion: v2
+    created: "2024-10-29T12:51:35.85051076Z"
+    description: A chart for baka
+    digest: 50e12b51e862276c64521a42e7cebbf4e389e8af49b48edf64d879e6172fa548
+    home: https://github.com/clownfishx/baka
+    keywords:
+    - baka
+    - automatic
+    - backup
+    - database
+    - s3
+    name: baka
+    sources:
+    - https://github.com/clownfishx/baka
+    urls:
+    - https://github.com/clownfishx/baka/releases/download/baka-2.0.1/baka-2.0.1.tgz
+    version: 2.0.1
+  - apiVersion: v2
     created: "2024-10-29T11:53:33.047808792Z"
     description: A chart for baka
     digest: 857c53c1c995a937d35160c83d035a1bd263e4c6502ec8714e1d330af1481866
@@ -69,4 +86,4 @@ entries:
     urls:
     - https://github.com/clownfishx/baka/releases/download/baka-0.0.2/baka-0.0.2.tgz
     version: 0.0.2
-generated: "2024-10-29T11:53:33.047825503Z"
+generated: "2024-10-29T12:51:35.850538382Z"
