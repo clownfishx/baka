@@ -27,6 +27,10 @@ if [ -z "${MYSQL_HOST}" ]; then
   exit 1
 fi
 
+if [ -z "${STORAGE_CLASS}" ]; then
+  export STORAGE_CLASS="ONEZONE_IA"
+fi
+
 # Set the directory where you want to store the dump files
 backup_dir="/tmp"
 
@@ -45,7 +49,7 @@ for db in $database_list; do
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${db}_${dump_name}.sql"
 
     echo "Uploading $db.sql to S3"
-    s3cmd put $backup_dir/$db.sql s3://${AWS_BUCKET}/$s3_key
+    s3cmd put $backup_dir/$db.sql s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
     echo "Upload complete for $db.sql to $s3_key"
 done
 

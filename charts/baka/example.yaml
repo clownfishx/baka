@@ -11,6 +11,7 @@ jobs:
       bucket: "storage"
       key: ""
       secret: ""
+      storage_class: "ONEZONE_IA"
     schedule: "* * * * *"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 30
