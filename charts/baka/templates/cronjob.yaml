@@ -37,15 +37,15 @@ spec:
           containers:
           - name: {{ $jobname }}
             {{- if eq $job.database.type "postgres" }}
-            image: clownfishx/baka-postgres:0.0.4
+            image: clownfishx/baka-postgres:0.0.5
             {{- end }}
 
             {{- if eq $job.database.type "mongo" }}
-            image: clownfishx/baka-mongo:0.0.4
+            image: clownfishx/baka-mongo:0.0.5
             {{- end }}
 
             {{- if eq $job.database.type "mysql" }}
-            image: clownfishx/baka-mysql:0.0.4
+            image: clownfishx/baka-mysql:0.0.5
             {{- end }}
 
             imagePullPolicy: IfNotPresent
