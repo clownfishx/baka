@@ -16,3 +16,4 @@ services:
       AWS_ACCESS_KEY_ID:
       AWS_SECRET_ACCESS_KEY:
       STORAGE_CLASS: ONEZONE_IA
+      IGNORE_DATABASES: database_default,database_default2

@@ -17,3 +17,6 @@ jobs:
     successfulJobsHistoryLimit: 30
     concurrencyPolicy: Allow
     restartPolicy: OnFailure
+    ignoreDatabases:
+      - "database_default"
+      - "database_default2"

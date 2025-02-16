@@ -31,10 +31,20 @@ if [ -z "${STORAGE_CLASS}" ]; then
   export STORAGE_CLASS="ONEZONE_IA"
 fi
 
+export DEFAULT_IGNORE_DATABASES="postgres,template0,template1"
+
+if [ -z "${IGNORE_DATABASES}" ]; then
+    export IGNORE_DATABASES="$DEFAULT_IGNORE_DATABASES"
+else
+    export IGNORE_DATABASES="${IGNORE_DATABASES},${DEFAULT_IGNORE_DATABASES}"
+fi
+
+IGNORE_DATABASES=$(echo "$IGNORE_DATABASES" | sed "s/\([^,]*\)/'\1'/g")
+
 # Set the directory where you want to store the dump files
 backup_dir="/tmp"
 
-database_list=$(psql -q -A -t -c "SELECT datname FROM pg_database where datname not in ('postgres', 'template1', 'template0')")
+database_list=$(psql -q -A -t -c "SELECT datname FROM pg_database where datname not in (${IGNORE_DATABASES})")
 # Get a list of databases
 databases=$(echo $database_list | cut -d \| -f 1)
 

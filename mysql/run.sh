@@ -31,11 +31,21 @@ if [ -z "${STORAGE_CLASS}" ]; then
   export STORAGE_CLASS="ONEZONE_IA"
 fi
 
+export DEFAULT_IGNORE_DATABASES="Database|information_schema|performance_schema|mysql|sys"
+
+if [ -z "${IGNORE_DATABASES}" ]; then
+    export IGNORE_DATABASES="$DEFAULT_IGNORE_DATABASES"
+else
+    export IGNORE_DATABASES="${IGNORE_DATABASES}|${DEFAULT_IGNORE_DATABASES}"
+fi
+
+IGNORE_DATABASES=$(echo "$IGNORE_DATABASES" | sed "s/,/|/g")
+
 # Set the directory where you want to store the dump files
 backup_dir="/tmp"
 
 # Get a list of MySQL databases, excluding system databases
-database_list=$(mariadb -h "${MYSQL_HOST}" -u "${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -e "SHOW DATABASES;" | grep -Ev "(Database|information_schema|performance_schema|mysql|sys)")
+database_list=$(mariadb -h "${MYSQL_HOST}" -u "${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -e "SHOW DATABASES;" | grep -Ev "(${IGNORE_DATABASES})")
 
 # Get the current date
 current_date=$(date +"%Y/%m/%d")

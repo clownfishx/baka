@@ -60,6 +60,10 @@ spec:
               value: {{ $job.s3.secret | quote }}
             - name: "STORAGE_CLASS"
               value: {{ $job.s3.storage_class | quote }}
+            {{- if $job.ignoreDatabases }}
+            - name: "IGNORE_DATABASES"
+              value: {{ join "," $job.ignoreDatabases | quote }}
+            {{- end }}
             {{- if eq $job.database.type "postgres" }}
             - name: "PGUSER"
               value: {{ $job.database.user | quote }}
