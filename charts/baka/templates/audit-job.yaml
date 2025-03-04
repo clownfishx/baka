@@ -8,6 +8,7 @@ metadata:
     {{- include "cronjobs.labels" $ | nindent 4 }}
 spec:
   backoffLimit: {{ $job.backoffLimit | default 6 }}
+  suspend: true
   template:
     spec:
       restartPolicy: {{ $job.restartPolicy | default "Never" }}
