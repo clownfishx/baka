@@ -2,6 +2,11 @@
 
 set -e
 
+export PGUSER="${DATABASE_USER}"
+export PGPASSWORD="${DATABASE_PASSWORD}"
+export PGHOST="${DATABASE_HOST}"
+export PGPORT="${DATABASE_PORT}"
+
 if [ -z "${AWS_BUCKET}" ]; then
   echo "You need to set the AWS_BUCKET environment variable."
   exit 1

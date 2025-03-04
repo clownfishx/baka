@@ -21,6 +21,15 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Expand the release name of the chart.
 */}}
+
 {{- define "cronjobs.releaseName" -}}
+{{- default .Release.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "baka.releaseName" -}}
+{{- default .Release.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "baka.backupJobName" -}}
 {{- default .Release.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}

@@ -12,18 +12,18 @@ if [ -z "${BUCKET_PREFIX}" ]; then
   exit 1
 fi
 
-if [ -z "${MYSQL_USER}" ]; then
-  echo "You need to set the MYSQL_USER environment variable."
+if [ -z "${DATABASE_USER}" ]; then
+  echo "You need to set the DATABASE_USER environment variable."
   exit 1
 fi
 
-if [ -z "${MYSQL_PASSWORD}" ]; then
-  echo "You need to set the MYSQL_PASSWORD environment variable."
+if [ -z "${DATABASE_PASSWORD}" ]; then
+  echo "You need to set the DATABASE_PASSWORD environment variable."
   exit 1
 fi
 
-if [ -z "${MYSQL_HOST}" ]; then
-  echo "You need to set the MYSQL_HOST environment variable."
+if [ -z "${DATABASE_HOST}" ]; then
+  echo "You need to set the DATABASE_HOST environment variable."
   exit 1
 fi
 
@@ -45,15 +45,15 @@ IGNORE_DATABASES=$(echo "$IGNORE_DATABASES" | sed "s/,/|/g")
 backup_dir="/tmp"
 
 # Get a list of MySQL databases, excluding system databases
-database_list=$(mariadb -h "${MYSQL_HOST}" -u "${MYSQL_USER}" -p"${MYSQL_PASSWORD}" -e "SHOW DATABASES;" | grep -Ev "(${IGNORE_DATABASES})")
+database_list=$(mariadb -h "${DATABASE_HOST}" -u "${DATABASE_USER}" -p"${DATABASE_PASSWORD}" -e "SHOW DATABASES;" | grep -Ev "(${IGNORE_DATABASES})")
 
 # Get the current date
 current_date=$(date +"%Y/%m/%d")
 
 # Loop through each database and dump it to a separate file
 for db in $database_list; do
-    echo "Starting dump of ${db} database(s) from ${MYSQL_HOST}..."
-    mysqldump -h "${MYSQL_HOST}" -u "${MYSQL_USER}" -p"${MYSQL_PASSWORD}" --databases $db > $backup_dir/$db.sql
+    echo "Starting dump of ${db} database(s) from ${DATABASE_HOST}..."
+    mysqldump -h "${DATABASE_HOST}" -u "${DATABASE_USER}" -p"${DATABASE_PASSWORD}" --databases $db > $backup_dir/$db.sql
     # Set the S3 key
     dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${db}_${dump_name}.sql"

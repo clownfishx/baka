@@ -13,8 +13,11 @@ on:
         type: choice
         options:
           - postgres
+          - postgres-restore
           - mongo
+          - mongo-restore
           - mysql
+          - mysql-restore
 jobs:
   docker:
     runs-on: ubuntu-latest

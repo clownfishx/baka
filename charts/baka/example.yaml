@@ -1,17 +1,30 @@
-jobs:
-  backup-postgres-dev:
-    database:
-      type: "postgres"
-      host: "db"
-      user: "postgres"
-      password: "postgres"
-      port: 5432
-    s3:
-      prefix: "prefix"
-      bucket: "storage"
-      key: ""
-      secret: ""
-      storage_class: "ONEZONE_IA"
+backupJobs:
+  postgres-dev:
+    type: "postgres"
+    env:
+      DATABASE_USER: ''
+      DATABASE_PASSWORD: ''
+      DATABASE_HOST: ''
+      DATABASE_PORT: ''
+      BUCKET_PREFIX: ''
+      AWS_BUCKET: ''
+      AWS_ACCESS_KEY_ID: ''
+      AWS_SECRET_ACCESS_KEY: ''
+      STORAGE_CLASS: ''
+      IGNORE_DATABASES: 'ONEZONE_IA'
+    externalSecrets:
+      - clusterStoreName: "aws-parameter-store"
+        refSecretName: "aws-parameter-store"
+        isUseProperty: false
+        secrets:
+          DATABASE_HOST: RDS_MASTER_HOST
+          DATABASE_PORT: RDS_PORT
+      - clusterStoreName: "aws-secrets-manager"
+        refSecretName: "application-secret"
+        isUseProperty: true
+        secrets:
+          DATABASE_PASSWORD: RDS_PASSWORD
+          DATABASE_USER: RDS_USERNAME
     schedule: "* * * * *"
     failedJobsHistoryLimit: 1
     successfulJobsHistoryLimit: 30
@@ -20,3 +33,24 @@ jobs:
     ignoreDatabases:
       - "database_default"
       - "database_default2"
+
+restoreJobs:
+    postgres-dev:
+      type: "postgres"
+      env:
+        FILE_URL: "https://storage.s3.amazonaws.com/backup/backup.dump"
+        DATABASE_USER: ''
+        DATABASE_PASSWORD: ''
+        DATABASE_HOST: ''
+        DATABASE_PORT: ''
+
+auditJobs:
+    postgres-dev:
+      type: "postgres"
+      env:
+        FILE_URL: "https://storage.s3.amazonaws.com/backup/backup.dump"
+        DATABASE_USER: ''
+        DATABASE_PASSWORD: ''
+        DATABASE_HOST: ''
+        DATABASE_PORT: ''
+

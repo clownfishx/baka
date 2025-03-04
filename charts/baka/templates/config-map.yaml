@@ -1,0 +1,41 @@
+{{- range $jobname, $job := .Values.backupJobs }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backup-job-{{ $jobname }}-config
+  labels:
+    {{- include "cronjobs.labels" $ | nindent 4 }}
+data:
+  {{- range $key, $value := $job.env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+
+{{- range $jobname, $job := .Values.restoreJobs }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: restore-job-{{ $jobname }}-config
+  labels:
+    {{- include "cronjobs.labels" $ | nindent 4 }}
+data:
+  {{- range $key, $value := $job.env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}
+
+{{- range $jobname, $job := .Values.auditJobs }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: audit-job-{{ $jobname }}-config
+  labels:
+    {{- include "cronjobs.labels" $ | nindent 4 }}
+data:
+  {{- range $key, $value := $job.env }}
+  {{ $key }}: {{ $value | quote }}
+  {{- end }}
+{{- end }}

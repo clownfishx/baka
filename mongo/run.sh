@@ -12,23 +12,23 @@ if [ -z "${BUCKET_PREFIX}" ]; then
   exit 1
 fi
 
-if [ -z "${MONGODB_USERNAME}" ]; then
-  echo "You need to set the MONGODB_USERNAME environment variable."
+if [ -z "${DATABASE_USER}" ]; then
+  echo "You need to set the DATABASE_USER environment variable."
   exit 1
 fi
 
-if [ -z "${MONGODB_PASSWORD}" ]; then
-  echo "You need to set the MONGODB_PASSWORD environment variable."
+if [ -z "${DATABASE_PASSWORD}" ]; then
+  echo "You need to set the DATABASE_PASSWORD environment variable."
   exit 1
 fi
 
-if [ -z "${MONGODB_HOST}" ]; then
-  echo "You need to set the MONGODB_HOST environment variable."
+if [ -z "${DATABASE_HOST}" ]; then
+  echo "You need to set the DATABASE_HOST environment variable."
   exit 1
 fi
 
-if [ -z "${MONGODB_PORT}" ]; then
-  echo "You need to set the MONGODB_PORT environment variable."
+if [ -z "${DATABASE_PORT}" ]; then
+  echo "You need to set the DATABASE_PORT environment variable."
   exit 1
 fi
 
@@ -39,7 +39,7 @@ fi
 # Set the directory where you want to store the dump files
 backup_dir="/tmp"
 
-#databases=$(mongo --host $MONGODB_HOST --port $MONGODB_PORT --username $MONGODB_USERNAME --password $MONGODB_PASSWORD --quiet --eval "db.adminCommand('listDatabases').databases.forEach(function(d){print(d.name)})")
+#databases=$(mongo --host $DATABASE_HOST --port $DATABASE_PORT --username $DATABASE_USER --password $DATABASE_PASSWORD --quiet --eval "db.adminCommand('listDatabases').databases.forEach(function(d){print(d.name)})")
 output=$(python list_database.py)
 
 # Print the output
@@ -52,7 +52,7 @@ current_date=$(date +"%Y/%m/%d")
 echo "$output" | while read -r line; do
     db=$line
     echo "Starting dump of ${db} database(s) from ${PGHOST}..."
-    mongodump --authenticationDatabase=admin --uri="mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/" --db $db --out $backup_dir/$db
+    mongodump --authenticationDatabase=admin --uri="mongodb://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/" --db $db --out $backup_dir/$db
 
     cd $backup_dir/$db
     zip -r "$backup_dir/$db.zip" *

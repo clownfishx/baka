@@ -1,0 +1,93 @@
+{{- range $jobname, $job := .Values.backupJobs }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "cronjobs.releaseName" $ }}-{{ $jobname }}
+  labels:
+    {{- include "cronjobs.labels" $ | nindent 4 }}
+spec:
+  concurrencyPolicy: {{ $job.concurrencyPolicy | default "Allow" }}
+  failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit | default 10 }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ include "cronjobs.releaseName" $ }}
+            cron: {{ $jobname }}
+        spec:
+        {{- if and (hasKey $job "serviceAccount") (hasKey $job.serviceAccount "name") }}
+          serviceAccountName: {{ $job.serviceAccount.name }}
+        {{- else }}
+          serviceAccountName: {{ $.Release.Name}}-{{ $jobname }}
+        {{- end }}
+        {{- if hasKey $job "securityContext" }}
+          {{- if $job.securityContext.runAsUser }}
+          securityContext:
+            runAsUser: {{ $job.securityContext.runAsUser }}
+            {{- if $job.securityContext.runAsGroup }}
+            runAsGroup: {{ $job.securityContext.runAsGroup }}
+            {{- end }}
+            {{- if $job.securityContext.fsGroup }}
+            fsGroup: {{ $job.securityContext.fsGroup }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+          containers:
+          - name: {{ $jobname }}
+
+            {{- if eq $job.type "postgres" }}
+            image: {{ $.Values.image.postgres.backup.repository }}:{{ $.Values.image.postgres.backup.tag }}
+          {{- end }}
+          {{- if eq $job.type "mongo" }}
+            image: {{ $.Values.image.mongo.backup.repository }}:{{ $.Values.image.mongo.backup.tag }}
+          {{- end }}
+          {{- if eq $job.type "mysql" }}
+            image: {{ $.Values.image.mysql.backup.repository }}:{{ $.Values.image.mysql.backup.tag }}
+          {{- end }}
+
+            imagePullPolicy: IfNotPresent
+            envFrom:
+              - configMapRef:
+                  name: backup-job-{{ $jobname }}-config
+              {{- range $v:= $job.externalSecrets }}
+              - secretRef:
+                  name: {{ $jobname }}-{{ $v.refSecretName }}-secret
+              {{- end }}
+            {{- with $job.command }}
+            command:
+{{ toYaml . | indent 12 }}
+            {{- end }}
+            {{- with $job.args }}
+            args:
+{{ toYaml . | indent 12 }}
+              {{- end }}
+            {{- with $job.resources }}
+            resources:
+{{ toYaml . | indent 14 }}
+            {{- end }}
+            {{- with $job.volumeMounts }}
+            volumeMounts:
+{{ toYaml . | indent 12 }}
+            {{- end }}
+          {{- with $.Values.nodeSelector }}
+          nodeSelector:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{- with $.Values.affinity }}
+          affinity:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          {{- with $.Values.tolerations }}
+          tolerations:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+          restartPolicy: {{ $job.restartPolicy | default "Never" }}
+          {{- with $job.volumes }}
+          volumes:
+{{ toYaml . | indent 12 }}
+          {{- end }}
+  schedule: {{ $job.schedule | quote }}
+  successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit | default 10 }}
+{{- end }}

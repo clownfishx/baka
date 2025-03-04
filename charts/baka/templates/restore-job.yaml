@@ -1,0 +1,76 @@
+{{- range $jobname, $job := .Values.restoreJobs }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "cronjobs.releaseName" $ }}-restore-job-{{ $jobname }}
+  labels:
+    {{- include "cronjobs.labels" $ | nindent 4 }}
+spec:
+  backoffLimit: {{ $job.backoffLimit | default 6 }}
+  template:
+    spec:
+      restartPolicy: {{ $job.restartPolicy | default "Never" }}
+    {{- if and (hasKey $job "serviceAccount") (hasKey $job.serviceAccount "name") }}
+      serviceAccountName: {{ $job.serviceAccount.name }}
+    {{- else }}
+      serviceAccountName: {{ $.Release.Name}}-{{ $jobname }}
+    {{- end }}
+      containers:
+        - name: {{ $jobname }}
+        {{- if eq $job.type "postgres" }}
+          image: {{ $.Values.image.postgres.restore.repository }}:{{ $.Values.image.postgres.restore.tag }}
+        {{- end }}
+        {{- if eq $job.type "mongo" }}
+          image: {{ $.Values.image.mongo.restore.repository }}:{{ $.Values.image.mongo.restore.tag }}
+        {{- end }}
+        {{- if eq $job.type "mysql" }}
+          image: {{ $.Values.image.mysql.restore.repository }}:{{ $.Values.image.mysql.restore.tag }}
+        {{- end }}
+
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: restore-job-{{ $jobname }}-config
+          {{- range $v:= $job.externalSecrets }}
+            - secretRef:
+                name: {{ $jobname }}-restore-job-{{ $v.refSecretName }}-secret
+          {{- end }}
+
+        {{- with $job.command }}
+          command:
+{{ toYaml . | indent 10 }}
+        {{- end }}
+        {{- with $job.args }}
+          args:
+{{ toYaml . | indent 10 }}
+        {{- end }}
+        {{- with $job.resources }}
+          resources:
+{{ toYaml . | indent 12 }}
+        {{- end }}
+        {{- with $job.volumeMounts }}
+          volumeMounts:
+{{ toYaml . | indent 10 }}
+        {{- end }}
+      {{- with $.Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+
+      {{- with $.Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+
+      {{- with $.Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+
+      {{- with $job.volumes }}
+      volumes:
+{{ toYaml . | indent 8 }}
+      {{- end }}
+
+{{- end }}
