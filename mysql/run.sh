@@ -47,6 +47,10 @@ backup_dir="/tmp"
 # Get a list of MySQL databases, excluding system databases
 database_list=$(mariadb -h "${DATABASE_HOST}" -u "${DATABASE_USER}" -p"${DATABASE_PASSWORD}" -e "SHOW DATABASES;" | grep -Ev "(${IGNORE_DATABASES})")
 
+if [ -n "${DATABASE_NAME}" ]; then
+  database_list=$(echo $database_list | grep -w "${DATABASE_NAME}")
+fi
+
 # Get the current date
 current_date=$(date +"%Y/%m/%d")
 

@@ -49,7 +49,12 @@ IGNORE_DATABASES=$(echo "$IGNORE_DATABASES" | sed "s/\([^,]*\)/'\1'/g")
 # Set the directory where you want to store the dump files
 backup_dir="/tmp"
 
-database_list=$(psql -q -A -t -c "SELECT datname FROM pg_database where datname not in (${IGNORE_DATABASES})")
+if [ -n "${DATABASE_NAME}" ]; then
+  database_list=$(psql -q -A -t -c "SELECT datname FROM pg_database WHERE datname = '${DATABASE_NAME}'")
+else
+  database_list=$(psql -q -A -t -c "SELECT datname FROM pg_database WHERE datname NOT IN (${IGNORE_DATABASES})")
+fi
+
 # Get a list of databases
 databases=$(echo $database_list | cut -d \| -f 1)
 

@@ -12,6 +12,7 @@ backupJobs:
       AWS_SECRET_ACCESS_KEY: ''
       STORAGE_CLASS: ''
       IGNORE_DATABASES: 'ONEZONE_IA'
+      #DATABASE_NAME: '' Backup only one database
     externalSecrets:
       - clusterStoreName: "aws-parameter-store"
         refSecretName: "aws-parameter-store"
