@@ -13,6 +13,7 @@ backupJobs:
       STORAGE_CLASS: ''
       IGNORE_DATABASES: 'ONEZONE_IA'
       #DATABASE_NAME: '' Backup only one database
+      #FILE_NAME: '' Backup name (don't include extension)
     externalSecrets:
       - clusterStoreName: "aws-parameter-store"
         refSecretName: "aws-parameter-store"

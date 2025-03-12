@@ -66,8 +66,11 @@ for db in $databases; do
     echo "Starting dump of ${db} database(s) from ${PGHOST}..."
     pg_dump -Fc --no-acl --no-owner $db > $backup_dir/$db.dump
     # Set the S3 key
-    dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
-    s3_key="${BUCKET_PREFIX}/$db/${current_date}/${db}_${dump_name}.dump"
+    if [ -z "${FILE_NAME}" ]; then
+        dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
+        FILE_NAME="${db}_${dump_name}"
+    fi
+    s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.dump"
 
     echo "Uploading $db.dump to S3"
     s3cmd put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS

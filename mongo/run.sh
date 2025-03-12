@@ -57,8 +57,11 @@ echo "$output" | while read -r line; do
     cd $backup_dir/$db
     zip -r "$backup_dir/$db.zip" *
     # Set the S3 key
-    dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
-    s3_key="${BUCKET_PREFIX}/$db/${current_date}/${db}_${dump_name}.zip"
+    if [ -z "${FILE_NAME}" ]; then
+      dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
+      FILE_NAME="${db}_${dump_name}"
+    fi
+    s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.zip"
 
     echo "Uploading $db.dump to S3"
     s3cmd put $backup_dir/$db.zip s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS

@@ -59,8 +59,11 @@ for db in $database_list; do
     echo "Starting dump of ${db} database(s) from ${DATABASE_HOST}..."
     mysqldump -h "${DATABASE_HOST}" -u "${DATABASE_USER}" -p"${DATABASE_PASSWORD}" --databases $db > $backup_dir/$db.sql
     # Set the S3 key
-    dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
-    s3_key="${BUCKET_PREFIX}/$db/${current_date}/${db}_${dump_name}.sql"
+    if [ -z "${FILE_NAME}" ]; then
+      dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
+      FILE_NAME="${db}_${dump_name}"
+    fi
+    s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.sql"
 
     echo "Uploading $db.sql to S3"
     s3cmd put $backup_dir/$db.sql s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
