@@ -48,6 +48,12 @@ echo "Output captured into shell variable:"
 # Get the current date
 current_date=$(date +"%Y/%m/%d")
 
+# Throw error if no databases are found
+if [ -z "$output" ]; then
+    echo "No databases found to backup"
+    exit 1
+fi
+
 # Loop through each database and dump it to a separate file
 echo "$output" | while read -r line; do
     db=$line
@@ -64,7 +70,7 @@ echo "$output" | while read -r line; do
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.zip"
 
     echo "Uploading $db.dump to S3"
-    s3cmd put $backup_dir/$db.zip s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
+    s3cmd --no-mime-magic put $backup_dir/$db.zip s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
     echo "Upload complete for $db.dump to $s3_key"
 done
 

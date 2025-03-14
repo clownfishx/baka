@@ -61,10 +61,16 @@ databases=$(echo $database_list | cut -d \| -f 1)
 # Get the current date
 current_date=$(date +"%Y/%m/%d")
 
+# throw error if no databases are found
+if [ -z "$databases" ]; then
+    echo "No databases found to backup"
+    exit 1
+fi
+
 # Loop through each database and dump it to a separate file
 for db in $databases; do
     echo "Starting dump of ${db} database(s) from ${PGHOST}..."
-    pg_dump -Fc --no-acl --no-owner $db > $backup_dir/$db.dump
+    pg_dump -Fc --no-acl --no-owner "$db" > $backup_dir/$db.dump
     # Set the S3 key
     if [ -z "${FILE_NAME}" ]; then
         dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
@@ -73,7 +79,7 @@ for db in $databases; do
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.dump"
 
     echo "Uploading $db.dump to S3"
-    s3cmd put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
+    s3cmd --no-mime-magic put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
     echo "Upload complete for $db.dump to $s3_key"
 done
 

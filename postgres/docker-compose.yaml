@@ -3,18 +3,21 @@ services:
     image: postgres:14.4
     environment:
       POSTGRES_PASSWORD: asdfasdf
-      POSTGRES_USER: root
+      POSTGRES_USER: postgres
       POSTGRES_DB: testdata
 
   backup:
     build: .
     environment:
       BUCKET_PREFIX: testing
-      PGUSER: root
-      PGPASSWORD: asdfasdf
-      PGHOST: db
-      AWS_BUCKET:
-      AWS_ACCESS_KEY_ID:
-      AWS_SECRET_ACCESS_KEY:
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: asdfasdf
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      AWS_BUCKET: abc
+      AWS_ACCESS_KEY_ID: abc
+      AWS_SECRET_ACCESS_KEY: abc
       STORAGE_CLASS: ONEZONE_IA
       IGNORE_DATABASES: database_default,database_default2
+      FILE_NAME: abc
+      DATABASE_NAME: testdata

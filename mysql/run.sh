@@ -51,6 +51,12 @@ if [ -n "${DATABASE_NAME}" ]; then
   database_list=$(echo $database_list | grep -w "${DATABASE_NAME}")
 fi
 
+# Throw error if no databases are found
+if [ -z "$database_list" ]; then
+    echo "No databases found to backup"
+    exit 1
+fi
+
 # Get the current date
 current_date=$(date +"%Y/%m/%d")
 
@@ -66,7 +72,7 @@ for db in $database_list; do
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.sql"
 
     echo "Uploading $db.sql to S3"
-    s3cmd put $backup_dir/$db.sql s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
+    s3cmd --no-mime-magic put $backup_dir/$db.sql s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
     echo "Upload complete for $db.sql to $s3_key"
 done
 
