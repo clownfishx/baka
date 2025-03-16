@@ -79,7 +79,7 @@ for db in $databases; do
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.dump"
 
     echo "Uploading $db.dump to S3"
-    s3cmd --no-mime-magic put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS
+    s3cmd --no-mime-magic put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS  --add-header="x-amz-meta-backup-at:$(date +"%Y-%m-%d %H-%M-%S")"
     echo "Upload complete for $db.dump to $s3_key"
 done
 
