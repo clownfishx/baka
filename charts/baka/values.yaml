@@ -2,21 +2,21 @@ image:
   postgres:
     backup:
       repository: "clownfishx/baka-postgres"
-      tag: "0.0.10"
+      tag: "0.0.11"
     restore:
       repository: "clownfishx/baka-postgres-restore"
       tag: "0.0.6"
   mongo:
     backup:
       repository: "clownfishx/baka-mongo"
-      tag: "0.0.10"
+      tag: "0.0.11"
     restore:
       repository: "clownfishx/baka-mongo-restore"
       tag: "0.0.6"
   mysql:
     backup:
       repository: "clownfishx/baka-mysql"
-      tag: "0.0.10"
+      tag: "0.0.11"
     restore:
       repository: "clownfishx/baka-mysql-restore"
       tag: "0.0.6"

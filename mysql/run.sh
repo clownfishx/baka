@@ -66,8 +66,10 @@ for db in $database_list; do
     mysqldump -h "${DATABASE_HOST}" -u "${DATABASE_USER}" -p"${DATABASE_PASSWORD}" --databases $db > $backup_dir/$db.sql
     # Set the S3 key
     if [ -z "${FILE_NAME}" ]; then
-      dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
-      FILE_NAME="${db}_${dump_name}"
+        dump_name=$(date +"%Y-%m-%d_%H-%M-%S")
+        NAME="${db}_${dump_name}"
+    else
+        NAME="${FILE_NAME}"
     fi
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${FILE_NAME}.sql"
 
