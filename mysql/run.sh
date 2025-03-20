@@ -12,6 +12,19 @@ if [ -z "${BUCKET_PREFIX}" ]; then
   exit 1
 fi
 
+# Check if AWS_ACCESS_KEY_ID is empty
+if [ -z "$AWS_ACCESS_KEY_ID" ]; then
+    echo "AWS_ACCESS_KEY_ID is empty. Updating ~/.s3cfg..."
+
+    # Create or update ~/.s3cfg with empty values
+    cat > ~/.s3cfg <<EOL
+[default]
+access_key =
+secret_key =
+security_token =
+EOL
+fi
+
 if [ -z "${DATABASE_USER}" ]; then
   echo "You need to set the DATABASE_USER environment variable."
   exit 1
