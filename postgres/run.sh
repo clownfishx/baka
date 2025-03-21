@@ -1,7 +1,4 @@
 #!/bin/sh
-s3cmd --version
-sleep 3600 # sleep for 1 hour debug
-set -e
 
 export PGUSER="${DATABASE_USER}"
 export PGPASSWORD="${DATABASE_PASSWORD}"
@@ -13,29 +10,9 @@ if [ -z "${AWS_BUCKET}" ]; then
   exit 1
 fi
 
-if [ -z "${AWS_REGION}" ]; then
-  echo "You need to set the AWS_REGION environment variable."
-  exit 1
-fi
-
 if [ -z "${BUCKET_PREFIX}" ]; then
   echo "You need to set the PREFIX environment variable."
   exit 1
-fi
-
-# Check if AWS_ACCESS_KEY_ID is empty
-if [ -z "$AWS_ACCESS_KEY_ID" ]; then
-    echo "AWS_ACCESS_KEY_ID is empty. Updating ~/.s3cfg..."
-
-    # Create or update ~/.s3cfg with empty values
-    cat > ~/.s3cfg <<EOL
-[default]
-bucket_location = ${AWS_REGION}
-host_base = s3.${AWS_REGION}.amazonaws.com
-host_bucket = %(bucket)s.s3.${AWS_REGION}.amazonaws.com
-EOL
-
-cat ~/.s3cfg
 fi
 
 if [ -z "${PGUSER}" ]; then
@@ -103,7 +80,11 @@ for db in $databases; do
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${NAME}.dump"
 
     echo "Uploading $db.dump to S3"
-    s3cmd --no-mime-magic put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS  --add-header="x-amz-meta-backup-at:$(date +"%Y-%m-%d %H-%M-%S")" --region=${AWS_REGION}
+#    s3cmd --no-mime-magic put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS  --add-header="x-amz-meta-backup-at:$(date +"%Y-%m-%d %H-%M-%S")" --region=${AWS_REGION}
+    aws s3 cp $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key \
+        --storage-class $STORAGE_CLASS \
+        --metadata x-amz-meta-backup-at="$(date +"%Y-%m-%d %H-%M-%S")" \
+        --region ${AWS_REGION}
     echo "Upload complete for $db.dump to $s3_key"
 done
 

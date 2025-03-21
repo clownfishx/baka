@@ -3,7 +3,7 @@ FROM python:3.13.0a4-alpine3.19
 RUN apk update --no-cache && \
     apk add --no-cache postgresql-client
 
-RUN pip install s3cmd
+RUN pip install awscli
 
 ENV PGDUMP_OPTIONS -Fc --no-acl --no-owner
 
