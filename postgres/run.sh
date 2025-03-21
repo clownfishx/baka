@@ -12,6 +12,11 @@ if [ -z "${AWS_BUCKET}" ]; then
   exit 1
 fi
 
+if [ -z "${AWS_REGION}" ]; then
+  echo "You need to set the AWS_REGION environment variable."
+  exit 1
+fi
+
 if [ -z "${BUCKET_PREFIX}" ]; then
   echo "You need to set the PREFIX environment variable."
   exit 1
@@ -27,7 +32,6 @@ if [ -z "$AWS_ACCESS_KEY_ID" ]; then
 access_key =
 secret_key =
 security_token =
-bucket_location = ${AWS_REGION}
 EOL
 fi
 
@@ -96,7 +100,7 @@ for db in $databases; do
     s3_key="${BUCKET_PREFIX}/$db/${current_date}/${NAME}.dump"
 
     echo "Uploading $db.dump to S3"
-    s3cmd --no-mime-magic put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS  --add-header="x-amz-meta-backup-at:$(date +"%Y-%m-%d %H-%M-%S")"
+    s3cmd --no-mime-magic put $backup_dir/$db.dump s3://${AWS_BUCKET}/$s3_key --storage-class=$STORAGE_CLASS  --add-header="x-amz-meta-backup-at:$(date +"%Y-%m-%d %H-%M-%S")" --region=${AWS_REGION}
     echo "Upload complete for $db.dump to $s3_key"
 done
 
