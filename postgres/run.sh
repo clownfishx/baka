@@ -1,5 +1,6 @@
 #!/bin/sh
 s3cmd --version
+sleep 3600 # sleep for 1 hour debug
 set -e
 
 export PGUSER="${DATABASE_USER}"
