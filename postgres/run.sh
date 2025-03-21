@@ -32,7 +32,12 @@ if [ -z "$AWS_ACCESS_KEY_ID" ]; then
 access_key =
 secret_key =
 security_token =
+bucket_location = ${AWS_REGION}
+host_base = s3.${AWS_REGION}.amazonaws.com
+host_bucket = %(bucket)s.s3.${AWS_REGION}.amazonaws.com
 EOL
+
+cat ~/.s3cfg
 fi
 
 if [ -z "${PGUSER}" ]; then

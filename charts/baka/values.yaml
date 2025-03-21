@@ -2,7 +2,7 @@ image:
   postgres:
     backup:
       repository: "clownfishx/baka-postgres"
-      tag: "0.0.14"
+      tag: "0.0.15"
     restore:
       repository: "clownfishx/baka-postgres-restore"
       tag: "0.0.6"
