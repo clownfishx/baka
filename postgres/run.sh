@@ -1,5 +1,5 @@
 #!/bin/sh
-
+s3cmd --version
 set -e
 
 export PGUSER="${DATABASE_USER}"
@@ -31,7 +31,6 @@ if [ -z "$AWS_ACCESS_KEY_ID" ]; then
 [default]
 access_key =
 secret_key =
-security_token =
 bucket_location = ${AWS_REGION}
 host_base = s3.${AWS_REGION}.amazonaws.com
 host_bucket = %(bucket)s.s3.${AWS_REGION}.amazonaws.com
