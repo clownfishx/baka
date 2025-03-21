@@ -22,6 +22,7 @@ if [ -z "$AWS_ACCESS_KEY_ID" ]; then
 access_key =
 secret_key =
 security_token =
+bucket_location = ${AWS_REGION}
 EOL
 fi
 
