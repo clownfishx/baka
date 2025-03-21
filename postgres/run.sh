@@ -29,8 +29,6 @@ if [ -z "$AWS_ACCESS_KEY_ID" ]; then
     # Create or update ~/.s3cfg with empty values
     cat > ~/.s3cfg <<EOL
 [default]
-access_key =
-secret_key =
 bucket_location = ${AWS_REGION}
 host_base = s3.${AWS_REGION}.amazonaws.com
 host_bucket = %(bucket)s.s3.${AWS_REGION}.amazonaws.com
