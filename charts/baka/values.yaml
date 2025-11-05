@@ -16,7 +16,7 @@ image:
   mysql:
     backup:
       repository: "clownfishx/baka-mysql"
-      tag: "0.0.13"
+      tag: "0.0.14"
     restore:
       repository: "clownfishx/baka-mysql-restore"
       tag: "0.0.6"
