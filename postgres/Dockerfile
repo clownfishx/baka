@@ -1,7 +1,6 @@
 FROM python:3.13.0a4-alpine3.19
 
-RUN apk update --no-cache && \
-    apk add --no-cache postgresql18-client
+RUN apk add --no-cache postgresql18-client --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
 
 RUN pip install awscli
 
