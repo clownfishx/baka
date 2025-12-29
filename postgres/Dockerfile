@@ -1,7 +1,7 @@
 FROM python:3.13.0a4-alpine3.19
 
 RUN apk update --no-cache && \
-    apk add --no-cache postgresql-client-18
+    apk add --no-cache postgresql18-client
 
 RUN pip install awscli
 
