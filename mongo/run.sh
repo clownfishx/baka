@@ -77,11 +77,35 @@ if [ -n "${READ_PREFERENCE}" ]; then
     mongo_uri="${mongo_uri}?readPreference=${READ_PREFERENCE}"
 fi
 
+# Optional: bump server-side cursorTimeoutMillis to keep mongodump's
+# read cursor alive on huge collections. Default mongod value is
+# 600000 (10 min) — set CURSOR_TIMEOUT_MS to e.g. 21600000 (6h) to
+# avoid CursorNotFound mid-dump. Requires the DATABASE_USER to have
+# the clusterAdmin/hostManager role; on failure we just warn.
+if [ -n "${CURSOR_TIMEOUT_MS}" ]; then
+    echo "Setting server cursorTimeoutMillis=${CURSOR_TIMEOUT_MS}..."
+    MONGO_URI="$mongo_uri" CURSOR_TIMEOUT_MS="$CURSOR_TIMEOUT_MS" python -c "
+import os
+from pymongo import MongoClient
+ms = int(os.environ['CURSOR_TIMEOUT_MS'])
+try:
+    MongoClient(os.environ['MONGO_URI']).admin.command({'setParameter': 1, 'cursorTimeoutMillis': ms})
+    print(f'cursorTimeoutMillis set to {ms} ms')
+except Exception as e:
+    print(f'WARNING: failed to set cursorTimeoutMillis: {e}')
+"
+fi
+
+# MONGODUMP_OPTIONS lets you pass extra flags (e.g.
+# "--numParallelCollections=1 --gzip") to reduce cursor-idle pressure
+# when a single huge collection keeps tripping CursorNotFound.
+MONGODUMP_OPTIONS="${MONGODUMP_OPTIONS:-}"
+
 # Loop through each database and dump it to a separate file
 echo "$output" | while read -r line; do
     db=$line
     echo "Starting dump of ${db} database(s) from ${DATABASE_HOST}..."
-    mongodump --authenticationDatabase=admin --uri="$mongo_uri" --db $db --out $backup_dir/$db
+    mongodump --authenticationDatabase=admin --uri="$mongo_uri" --db $db --out $backup_dir/$db ${MONGODUMP_OPTIONS}
 
     cd $backup_dir/$db
     zip -r "$backup_dir/$db.zip" *

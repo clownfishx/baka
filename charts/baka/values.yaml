@@ -9,7 +9,7 @@ image:
   mongo:
     backup:
       repository: "clownfishx/baka-mongo"
-      tag: "0.0.16"
+      tag: "0.0.17"
     restore:
       repository: "clownfishx/baka-mongo-restore"
       tag: "0.0.7"
