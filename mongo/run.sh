@@ -68,11 +68,20 @@ if [ -z "$output" ]; then
     exit 1
 fi
 
+# Build the connection URI. READ_PREFERENCE is optional:
+#   - leave empty for a standalone mongod (default driver behavior)
+#   - set to "secondaryPreferred" (or "secondary") for replica sets to
+#     avoid CursorNotFound errors caused by primary-side cursor timeouts
+mongo_uri="mongodb://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/"
+if [ -n "${READ_PREFERENCE}" ]; then
+    mongo_uri="${mongo_uri}?readPreference=${READ_PREFERENCE}"
+fi
+
 # Loop through each database and dump it to a separate file
 echo "$output" | while read -r line; do
     db=$line
-    echo "Starting dump of ${db} database(s) from ${PGHOST}..."
-    mongodump --authenticationDatabase=admin --uri="mongodb://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/" --db $db --out $backup_dir/$db
+    echo "Starting dump of ${db} database(s) from ${DATABASE_HOST}..."
+    mongodump --authenticationDatabase=admin --uri="$mongo_uri" --db $db --out $backup_dir/$db
 
     cd $backup_dir/$db
     zip -r "$backup_dir/$db.zip" *
