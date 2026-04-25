@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - /charts/baka/Chart.yaml
+        - 'charts/baka/Chart.yaml'
 
 jobs:
   release:
