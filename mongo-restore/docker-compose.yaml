@@ -1,0 +1,20 @@
+services:
+  mongodb:
+    image: mongo:latest
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: adminpassword
+    ports:
+      - "27017:27017"
+
+  restore:
+    build: .
+    environment:
+      DATABASE_USER: admin
+      DATABASE_PASSWORD: adminpassword
+      DATABASE_HOST: mongodb
+      DATABASE_PORT: 27017
+      DATABASE_NAME: testdata
+      IS_AUDIT: "true"
+      REMOVE_DATABASE: "true"
+      FILE_URL: "https://storage.s3.amazonaws.com/backup/backup.zip"
