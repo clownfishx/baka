@@ -1,7 +1,6 @@
 services:
   mongodb:
     image: mongo:latest
-    container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: adminpassword
@@ -12,12 +11,12 @@ services:
     build: .
     environment:
       BUCKET_PREFIX: testing
-      MONGODB_USERNAME: admin
-      MONGODB_PASSWORD: adminpassword
-      MONGODB_HOST: mongodb
-      MONGODB_PORT: 27017
-      AWS_BUCKET:
-      AWS_ACCESS_KEY_ID:
-      AWS_SECRET_ACCESS_KEY:
+      DATABASE_USER: admin
+      DATABASE_PASSWORD: adminpassword
+      DATABASE_HOST: mongodb
+      DATABASE_PORT: 27017
+      AWS_BUCKET: estx
+      AWS_ACCESS_KEY_ID: estx
+      AWS_SECRET_ACCESS_KEY: estx
       STORAGE_CLASS: ONEZONE_IA
       IGNORE_DATABASES: database_default,database_default2

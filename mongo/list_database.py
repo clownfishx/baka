@@ -1,10 +1,10 @@
 from pymongo import MongoClient
 
 import os
-MONGODB_USERNAME=os.getenv('MONGODB_USERNAME')
-MONGODB_PASSWORD=os.getenv('MONGODB_PASSWORD')
-MONGODB_HOST=os.getenv('MONGODB_HOST')
-MONGODB_PORT=os.getenv('MONGODB_PORT')
+DATABASE_USER=os.getenv('DATABASE_USER')
+DATABASE_PASSWORD=os.getenv('DATABASE_PASSWORD')
+DATABASE_HOST=os.getenv('DATABASE_HOST')
+DATABASE_PORT=os.getenv('DATABASE_PORT')
 IGNORE_DATABASES=os.getenv('IGNORE_DATABASES')
 DATABASE_NAME=os.getenv('DATABASE_NAME')
 
@@ -13,7 +13,7 @@ if IGNORE_DATABASES:
     excludes += IGNORE_DATABASES.split(',')
 
 # Connect to MongoDB
-client = MongoClient(f'mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}:{MONGODB_PORT}/')
+client = MongoClient(f'mongodb://{DATABASE_USER}:{DATABASE_PASSWORD}@{DATABASE_HOST}:{DATABASE_PORT}/')
 
 # List all the databases
 database_names = client.list_database_names()
