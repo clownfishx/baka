@@ -101,11 +101,23 @@ fi
 # when a single huge collection keeps tripping CursorNotFound.
 MONGODUMP_OPTIONS="${MONGODUMP_OPTIONS:-}"
 
+# USE_PYTHON_DUMPER=true switches from mongodump to dump.py, which
+# streams each collection with no_cursor_timeout=True and resumes from
+# the last seen _id when CursorNotFound/AutoReconnect/NetworkTimeout
+# is hit. Use this when mongodump keeps failing on huge collections
+# despite READ_PREFERENCE/CURSOR_TIMEOUT_MS/MONGODUMP_OPTIONS — or on
+# managed mongo (Atlas) where setParameter is denied.
+USE_PYTHON_DUMPER="${USE_PYTHON_DUMPER:-false}"
+
 # Loop through each database and dump it to a separate file
 echo "$output" | while read -r line; do
     db=$line
     echo "Starting dump of ${db} database(s) from ${DATABASE_HOST}..."
-    mongodump --authenticationDatabase=admin --uri="$mongo_uri" --db $db --out $backup_dir/$db ${MONGODUMP_OPTIONS}
+    if [ "${USE_PYTHON_DUMPER}" = "true" ]; then
+        DUMP_DB="$db" DUMP_OUT="$backup_dir/$db" python /dump.py
+    else
+        mongodump --authenticationDatabase=admin --uri="$mongo_uri" --db $db --out $backup_dir/$db ${MONGODUMP_OPTIONS}
+    fi
 
     cd $backup_dir/$db
     zip -r "$backup_dir/$db.zip" *

@@ -7,6 +7,7 @@ RUN pip install s3cmd pymongo
 
 ADD run.sh /run.sh
 ADD list_database.py /list_database.py
+ADD dump.py /dump.py
 RUN chmod +x /run.sh
 
 CMD ["sh", "run.sh"]

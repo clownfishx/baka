@@ -37,5 +37,6 @@ jobs:
         with:
           context: ./${{ github.event.inputs.type }}
           file: ./${{ github.event.inputs.type }}/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: clownfishx/baka-${{ github.event.inputs.type }}:${{ github.event.inputs.version }}
