@@ -2,14 +2,14 @@ image:
   postgres:
     backup:
       repository: "clownfishx/baka-postgres"
-      tag: "0.0.18"
+      tag: "0.0.20"
     restore:
       repository: "clownfishx/baka-postgres-restore"
-      tag: "0.0.18"
+      tag: "0.0.20"
   mongo:
     backup:
       repository: "clownfishx/baka-mongo"
-      tag: "0.0.18"
+      tag: "0.0.20"
     restore:
       repository: "clownfishx/baka-mongo-restore"
       tag: "0.0.7"
